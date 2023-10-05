@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: NanoPi-R2S-DHDAXCW-full
+name: NanoPi-R2S-DHDAXCW-lynfull
 
 on: 
   repository_dispatch:
@@ -185,11 +185,11 @@ jobs:
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
         rm -rf config.buildinfo
         rm -rf packages-server.zip
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz DHDAXCW-full-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DHDAXCW-full-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz DHDAXCW-lynfull-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DHDAXCW-lynfull-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
         popd
         make checksum
-        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DHDAXCW-full-sha256sums
+        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DHDAXCW-lynfull-sha256sums
         echo "GENERATE_STATUS=success" >> $GITHUB_OUTPUT
     - name: Generate release tag
       id: tag
