@@ -1,4 +1,3 @@
-
 config interface 'loopback'
 	option ifname 'lo'
 	option proto 'static'
@@ -18,9 +17,13 @@ config device 'lan_eth1_dev'
 
 config interface 'wan'
 	option ifname 'eth0'
-	option proto 'dhcp'
+	option _orig_ifname 'eth0'
+	option _orig_bridge 'false'
+	option proto 'pppoe'
+	option username 'hz5577052@163.gd'
+	option password '12341234'
+	option keepalive '0'
 
 config device 'wan_eth0_dev'
 	option name 'eth0'
 	option macaddr '2a:74:91:08:81:23'
-
