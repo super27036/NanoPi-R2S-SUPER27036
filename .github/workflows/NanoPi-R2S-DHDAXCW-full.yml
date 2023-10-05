@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: NanoPi-R2S-DHDAXCW-lynfull
+name: NanoPi-R2S-DHDAXCW-full
 
 on: 
   repository_dispatch:
