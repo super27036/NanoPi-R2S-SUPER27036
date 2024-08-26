@@ -79,35 +79,50 @@ git sparse-checkout set network/services/ddnsto
 
 
 # Add luci-app-onliner (need luci-app-nlbwmon)
-git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
+# git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
 
 # Add luci-app-oled (R2S Only)
-git clone --depth=1 https://github.com/NateLol/luci-app-oled
+# git clone --depth=1 https://github.com/NateLol/luci-app-oled
 
 # Add ServerChan
-git clone --depth=1 https://github.com/tty228/luci-app-serverchan
+# git clone --depth=1 https://github.com/tty228/luci-app-serverchan
 
 # Add luci-app-dockerman
-rm -rf ../../customfeeds/luci/collections/luci-lib-docker
-rm -rf ../../customfeeds/luci/applications/luci-app-docker
-rm -rf ../../customfeeds/luci/applications/luci-app-dockerman
-git clone --depth=1 https://github.com/lisaac/luci-app-dockerman
-git clone --depth=1 https://github.com/lisaac/luci-lib-docker
-
-# Remove old Argon config
-rm -rf ../../customfeeds/luci/applications/luci-app-argon-config
+# rm -rf ../../customfeeds/luci/collections/luci-lib-docker
+# rm -rf ../../customfeeds/luci/applications/luci-app-docker
+# rm -rf ../../customfeeds/luci/applications/luci-app-dockerman
+# git clone --depth=1 https://github.com/lisaac/luci-app-dockerman
+# git clone --depth=1 https://github.com/lisaac/luci-lib-docker
 
 # Add luci-theme
 # git clone https://github.com/DHDAXCW/theme
 # git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
 # git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config
 
-# Add luci-theme
-git clone https://github.com/DHDAXCW/theme
+# Delete old Argon and add new Argon
+# rm -rf ../../customfeeds/luci/themes/luci-theme-argon
+# rm -rf ../../customfeeds/luci/themes/luci-theme-argon-mod
+# rm -rf ../../customfeeds/luci/applications/luci-app-argon-config
 
-rm -rf ../../customfeeds/luci/themes/luci-theme-argon
-rm -rf ../../customfeeds/luci/themes/luci-theme-argon-mod
-rm -rf ../../customfeeds/luci/applications/luci-app-argon-config
+# Navigate to the correct directory
+cd ../../customfeeds/luci/themes
+
+# Delete old Argon themes
+rm -rf luci-theme-argon
+rm -rf luci-theme-argon-mod
+
+# Go back to the customfeeds directory
+cd ../applications
+
+# Delete old Argon config application
+rm -rf luci-app-argon-config
+
+# Go back to the base directory and clone the new Argon theme and config
+cd ../../
+git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon customfeeds/luci/themes/luci-theme-argon
+git clone -b 18.06 https://github.com/jerrykuku/luci-app-argon-config customfeeds/luci/applications/luci-app-argon-config
+
+
 
 git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon
 git clone -b 18.06 https://github.com/jerrykuku/luci-app-argon-config
