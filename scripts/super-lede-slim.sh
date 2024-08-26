@@ -98,9 +98,19 @@ git clone --depth=1 https://github.com/lisaac/luci-lib-docker
 rm -rf ../../customfeeds/luci/applications/luci-app-argon-config
 
 # Add luci-theme
+# git clone https://github.com/DHDAXCW/theme
+# git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
+# git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config
+
+# Add luci-theme
 git clone https://github.com/DHDAXCW/theme
-git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
-git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config
+
+rm -rf ../../customfeeds/luci/themes/luci-theme-argon
+rm -rf ../../customfeeds/luci/themes/luci-theme-argon-mod
+rm -rf ../../customfeeds/luci/applications/luci-app-argon-config
+
+git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon
+git clone -b 18.06 https://github.com/jerrykuku/luci-app-argon-config
 
 # Add subconverter
 git clone --depth=1 https://github.com/tindy2013/openwrt-subconverter
