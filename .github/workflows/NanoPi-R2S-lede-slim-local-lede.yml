@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: NanoPi-R2S-lede-slim
+name: NanoPi-R2S-lede-slim-local-lede
 
 on: 
   repository_dispatch:
