@@ -1,0 +1,19 @@
+name: Cleanup Old Workflow Runs
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Runs daily at midnight
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh
+      
+      - name: Authenticate with GitHub CLI
+        run: gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete old workflow runs
+        run: |
+          gh run list --limit 100 | grep 'COMPLETED' | awk '{print $1}' | xargs -I {} gh run delete {}
