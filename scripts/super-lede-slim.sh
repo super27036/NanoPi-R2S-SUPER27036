@@ -100,27 +100,11 @@ git sparse-checkout set network/services/ddnsto
 # git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config
 
 # Delete old Argon and add new Argon
-# rm -rf ../../customfeeds/luci/themes/luci-theme-argon
-# rm -rf ../../customfeeds/luci/themes/luci-theme-argon-mod
-# rm -rf ../../customfeeds/luci/applications/luci-app-argon-config
-
-# Navigate to the correct directory
-cd ../../customfeeds/luci/themes
-
-# Delete old Argon themes
-rm -rf luci-theme-argon
-rm -rf luci-theme-argon-mod
-
-# Go back to the customfeeds directory
-cd ../applications
-
-# Delete old Argon config application
-rm -rf luci-app-argon-config
-
-# Go back to the base directory and clone the new Argon theme and config
-cd ../../
-git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon customfeeds/luci/themes/luci-theme-argon
-git clone -b 18.06 https://github.com/jerrykuku/luci-app-argon-config customfeeds/luci/applications/luci-app-argon-config
+rm -rf ../../customfeeds/luci/themes/luci-theme-argon
+rm -rf ../../customfeeds/luci/themes/luci-theme-argon-mod
+rm -rf ../../customfeeds/luci/applications/luci-app-argon-config
+git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon 
+git clone -b 18.06 https://github.com/jerrykuku/luci-app-argon-config
 
 
 
