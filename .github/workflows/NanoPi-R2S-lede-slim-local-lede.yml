@@ -192,11 +192,11 @@ jobs:
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
         rm -rf config.buildinfo
         rm -rf packages-server.zip
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz lede-slim-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz lede-slim-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz lede-slim-local-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz lede-slim-local-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
         popd
         make checksum
-        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/lede-slim-sha256sums
+        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/lede-slim-local-sha256sums
         echo "GENERATE_STATUS=success" >> $GITHUB_OUTPUT
     - name: Generate release tag
       id: tag
@@ -208,7 +208,7 @@ jobs:
           echo "此固件为自己私用，请勿下载使用
                 lede = 使用coolsnowwolf的lede仓库
                 DHDAXCW = 使用DHDAXCW的修改后仓库
-                slim = 精简版
+                slim-local = 精简版
                 stable = 稳定版" >> release.txt
           echo "status=success" >> $GITHUB_OUTPUT
           
