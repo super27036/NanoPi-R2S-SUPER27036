@@ -31,17 +31,8 @@ git clone https://github.com/xiaorouji/openwrt-passwall passwall
 git clone https://github.com/xiaorouji/openwrt-passwall2 passwall2
 git clone https://github.com/super27036/openwrt-passwall-packages passwall-packages
 
-# git clone https://github.com/xiaorouji/openwrt-passwall
-# git clone -b packages https://github.com/xiaorouji/openwrt-passwall
-# git clone -b luci https://github.com/xiaorouji/openwrt-passwall
-# svn export https://github.com/xiaorouji/openwrt-passwall/branches/luci/luci-app-passwall
-
 # Add luci-app-ssr-plus
 git clone --depth=1 https://github.com/fw876/helloworld
-
-# Add luci-app-unblockneteasemusic
-# rm -rf ../../customfeeds/luci/applications/luci-app-unblockmusic
-# git clone --branch master https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git
 
 # Add luci-app-vssr <M>
 git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb.git
@@ -60,12 +51,6 @@ svn export https://github.com/linkease/nas-packages/trunk/network/services/ddnst
 # Add luci-app-onliner (need luci-app-nlbwmon)
 git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
 
-# Add luci-app-oled (R2S Only)
-git clone --depth=1 https://github.com/NateLol/luci-app-oled
-
-# Add ServerChan
-git clone --depth=1 https://github.com/tty228/luci-app-serverchan
-
 # Add luci-app-dockerman
 rm -rf ../../customfeeds/luci/collections/luci-lib-docker
 rm -rf ../../customfeeds/luci/applications/luci-app-docker
@@ -75,7 +60,6 @@ git clone --depth=1 https://github.com/lisaac/luci-lib-docker
 
 # Add luci-theme
 git clone https://github.com/DHDAXCW/theme
-git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config
 
 # Add subconverter
 git clone --depth=1 https://github.com/tindy2013/openwrt-subconverter
@@ -102,19 +86,14 @@ svn export https://github.com/messense/aliyundrive-webdav/trunk/openwrt/aliyundr
 svn export https://github.com/messense/aliyundrive-webdav/trunk/openwrt/luci-app-aliyundrive-webdav
 popd
 
-# Add Pandownload
-pushd package/lean
-svn export https://github.com/immortalwrt/packages/trunk/net/pandownload-fake-server
-popd
-
 # Mod zzz-default-settings
-pushd package/lean/default-settings/files
-sed -i '/http/d' zzz-default-settings
-sed -i '/18.06/d' zzz-default-settings
-export orig_version=$(cat "zzz-default-settings" | grep DISTRIB_REVISION= | awk -F "'" '{print $2}')
-export date_version=$(date -d "$(rdate -n -4 -p ntp.aliyun.com)" +'%Y-%m-%d')
-sed -i "s/${orig_version}/${orig_version} (${date_version})/g" zzz-default-settings
-popd
+# pushd package/lean/default-settings/files
+# sed -i '/http/d' zzz-default-settings
+# sed -i '/18.06/d' zzz-default-settings
+# export orig_version=$(cat "zzz-default-settings" | grep DISTRIB_REVISION= | awk -F "'" '{print $2}')
+# export date_version=$(date -d "$(rdate -n -4 -p ntp.aliyun.com)" +'%Y-%m-%d')
+# sed -i "s/${orig_version}/${orig_version} (${date_version})/g" zzz-default-settings
+# popd
 
 # Fix mt76 wireless driver
 pushd package/kernel/mt76
