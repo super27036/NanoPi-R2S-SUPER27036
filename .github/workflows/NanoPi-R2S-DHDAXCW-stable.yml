@@ -8,9 +8,9 @@
 
 name: NanoPi-R2S-DHDAXCW-stable
 
-on: 
-  repository_dispatch:
-  workflow_dispatch:
+# on: 
+#  repository_dispatch:
+#  workflow_dispatch:
 
   schedule:
     - cron: '0 9 1 * *' # 9am every month
