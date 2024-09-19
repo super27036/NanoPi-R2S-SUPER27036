@@ -19,7 +19,7 @@ on:
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
-  CONFIG_FILE: configs/lean/lede-slim-local-lede.config
+  CONFIG_FILE: configs/lean/lede_new_2024.config
   DIY_SH: scripts/local-lede-luic.sh
   KMODS_IN_FIRMWARE: true
   UPLOAD_RELEASE: true
