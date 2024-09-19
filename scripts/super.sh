@@ -50,8 +50,13 @@ git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
 git clone --depth=1 https://github.com/vernesong/OpenClash
 
 # Add ddnsto & linkease
-svn export https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-ddnsto
-svn export https://github.com/linkease/nas-packages/trunk/network/services/ddnsto
+git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages-luci.git
+cd nas-packages-luci
+git sparse-checkout set luci/luci-app-linkease
+
+git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages.git
+cd nas-packages
+git sparse-checkout set network/services/ddnsto
 
 # Add luci-app-onliner (need luci-app-nlbwmon)
 git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
