@@ -18,7 +18,6 @@ rm -rf openwrt-package/verysync
 rm -rf openwrt-package/luci-app-verysync
 
 # Add luci-app-passwall
-mkdir passwall passwall2 passwall-packages
 git clone https://github.com/xiaorouji/openwrt-passwall passwall
 git clone https://github.com/xiaorouji/openwrt-passwall2 passwall2
 git clone https://github.com/xiaorouji/openwrt-passwall-packages passwall-packages
@@ -46,8 +45,8 @@ cd nas-packages
 git sparse-checkout set network/services/ddnsto
 
 # Add luci-theme-argon and luci-app-argon-config
-git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/community/luci-theme-argon
-git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config package/community/luci-app-argon-config
+git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon
+git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config
 
 # Add subconverter
 git clone --depth=1 https://github.com/tindy2013/openwrt-subconverter
