@@ -9,4 +9,3 @@ config global
 	option mode 'normal'
 	option save '保存更改'
 	option bing_background '1'
-
