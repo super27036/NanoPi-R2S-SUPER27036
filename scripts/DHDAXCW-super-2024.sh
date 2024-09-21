@@ -61,7 +61,7 @@ git sparse-checkout set network/services/ddnsto
 
 # New Argon
 mkdir luci-theme-argon luci-app-argon-config
-git clone -b 18.06 https://github.com/super27035/luci-theme-argon luci-theme-argon
+git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon luci-theme-argon
 git clone -b 18.06 https://github.com/jerrykuku/luci-app-argon-config luci-app-argon-config
 
 # Add subconverter
