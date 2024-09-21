@@ -92,6 +92,17 @@ jobs:
         git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
         chmod +x ../scripts/*.sh
         ../scripts/hook-feeds.sh
+
+    - name: Remove Old Argon Themes
+      run: |
+        rm -rf ./customfeeds/luci/themes/luci-theme-argon-mod
+        rm -rf ./customfeeds/luci/themes/luci-theme-argon
+        rm -rf ./customfeeds/luci/applications/luci-app-argon-config
+
+    - name: Clone New Argon Applications
+      run: |
+        git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon ./customfeeds/luci/themes/luci-theme-argon
+        git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config ./customfeeds/luci/applications/luci-app-argon-config
     
     - name: Install Feeds
       run: |
