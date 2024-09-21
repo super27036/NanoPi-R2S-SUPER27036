@@ -27,12 +27,13 @@ rm -rf openwrt-package/luci-app-verysync
 # 删除旧的 luci-theme-argon 和 luci-theme-argon-mod
 rm -rf ../../customfeeds/luci/themes/luci-theme-argon-mod
 rm -rf ../../customfeeds/luci/themes/luci-theme-argon
+rm -rf ../../customfeeds/luci/applications/luci-app-argon-config
 
 # 克隆新的 luci-theme-argon
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon ../../customfeeds/luci/themes/luci-theme-argon
 
 # 克隆新的 luci-app-argon-config
-git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config ../../customfeeds/luci/themes/luci-app-argon-config
+git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config ../../customfeeds/luci/applications/luci-app-argon-config
 
 
 # 克隆 OpenWrt-Add 并只检出 luci-app-irqbalance
