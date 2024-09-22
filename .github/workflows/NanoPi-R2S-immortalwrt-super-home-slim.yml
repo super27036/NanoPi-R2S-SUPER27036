@@ -18,8 +18,8 @@ on:
 env:
   REPO_URL: https://github.com/DHDAXCW/lede-rockchip
   REPO_BRANCH: stable
-  CONFIG_FILE: configs/lean/DHDAXCW-super-2024.config
-  DIY_SH: scripts/DHDAXCW-super-2024.sh
+  CONFIG_FILE: configs/lean/immortalwrt-super-2024.config
+  DIY_SH: scripts/immortalwrt-super-2024.sh
   KMODS_IN_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
@@ -183,11 +183,11 @@ jobs:
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
         rm -rf config.buildinfo
         rm -rf packages-server.zip
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz DHDAXCW-super-home-slim-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DHDAXCW-super-home-slim-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz immortalwrt-super-home-slim-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz immortalwrt-super-home-slim-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
         popd
         make checksum
-        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DHDAXCW-super-home-slim-sha256sums
+        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/immortalwrt-super-home-slim-sha256sums
         echo "GENERATE_STATUS=success" >> $GITHUB_OUTPUT
     - name: Generate release tag
       id: tag
