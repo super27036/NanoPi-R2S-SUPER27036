@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: NanoPi-R2S-DHDAXCW-super-home-slim
+name: NanoPi-R2S-immortalwrt-super-home-slim
 
 on: 
   repository_dispatch:
