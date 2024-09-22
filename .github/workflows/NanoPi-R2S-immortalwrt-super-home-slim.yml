@@ -17,7 +17,7 @@ on:
 
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: stable
+  REPO_BRANCH: master
   CONFIG_FILE: configs/lean/immortalwrt-super-2024.config
   DIY_SH: scripts/immortalwrt-super-2024.sh
   KMODS_IN_FIRMWARE: true
