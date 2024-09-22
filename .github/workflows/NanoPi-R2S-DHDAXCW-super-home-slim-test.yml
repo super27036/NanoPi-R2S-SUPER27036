@@ -81,11 +81,14 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
 
-    - name: Clone PATCH branch
+    - name: Clone PATCH branch with sparse-checkout
       run: |
-        git clone https://github.com/super27036/NanoPi-R2S-SUPER27034/super-home-patch -b files super-home-patch
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        git init super-home-patch
+        cd super-home-patch
+        git remote add origin https://github.com/super27036/NanoPi-R2S-SUPER27034.git
+        git config core.sparseCheckout true
+        echo "files/super-home-patch/" >> .git/info/sparse-checkout
+        git pull origin files
 
     - name: Update Feeds
       id: update
@@ -107,7 +110,7 @@ jobs:
     - name: Copy FILES
       run: |
         cd $OPENWRTROOT
-        cp -rf ../super-home-patch/R2S/files ./files
+        cp -rf ../super-home-patch/files/super-home-patch ./files
         
     - name: Load Custom Configuration
       run: |
