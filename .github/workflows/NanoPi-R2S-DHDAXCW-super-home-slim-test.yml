@@ -83,7 +83,7 @@ jobs:
 
     - name: Clone PATCH branch
       run: |
-        git clone https://github.com/super27036/NanoPi-R2S-SUPER27034/super-home-patch -b flies super-home-patch
+        git clone https://github.com/super27036/NanoPi-R2S-SUPER27034/super-home-patch -b files super-home-patch
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
