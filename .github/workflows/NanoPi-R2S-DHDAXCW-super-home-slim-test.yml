@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: NanoPi-R2S-DHDAXCW-super-home-slim-test
+name: NanoPi-R2S-DHDAXCW-super-home-slim
 
 on: 
   repository_dispatch:
@@ -80,16 +80,7 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
-
-    - name: Clone PATCH branch with sparse-checkout
-      run: |
-        git init super-home-patch
-        cd super-home-patch
-        git remote add origin https://github.com/super27036/NanoPi-R2S-SUPER27034.git
-        git config core.sparseCheckout true
-        echo "files/super-home-patch/" >> .git/info/sparse-checkout
-        git pull origin files
-
+        
     - name: Update Feeds
       id: update
       run: |
@@ -110,7 +101,7 @@ jobs:
     - name: Copy FILES
       run: |
         cd $OPENWRTROOT
-        cp -rf ../super-home-patch/files/super-home-patch ./files
+        cp -rf ../PATCH/super-home-files/files ./files
         
     - name: Load Custom Configuration
       run: |
