@@ -110,7 +110,7 @@ jobs:
     - name: Copy FILES
       run: |
         cd $OPENWRTROOT
-        cp -rf ../PATCH/cuiwen-home-files/files ./files
+        cp -rf ../PATCH/super-home-files/files ./files
         
     - name: Load Custom Configuration
       run: |
