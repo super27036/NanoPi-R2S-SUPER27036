@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: NanoPi-R2S-DHDAXCW-cuiwen-home-slim
+name: NanoPi-R2S-DHDAXCW-cuiwen-home-slim-test
 
 on: 
   repository_dispatch:
