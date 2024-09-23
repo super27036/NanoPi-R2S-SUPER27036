@@ -17,6 +17,10 @@ rm -rf ../../customfeeds/luci/applications/luci-app-kodexplorer
 rm -rf openwrt-package/verysync
 rm -rf openwrt-package/luci-app-verysync
 
+# Add luci-app-unblockneteasemusic
+rm -rf ../../customfeeds/luci/applications/luci-app-unblockmusic
+git clone --depth=1 https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git
+
 # 删除旧的 luci-theme-argon 和 luci-theme-argon-mod 和 luci-app-argon-config
 rm -rf ../../customfeeds/luci/themes/luci-theme-argon-mod
 rm -rf ../../customfeeds/luci/themes/luci-theme-argon
