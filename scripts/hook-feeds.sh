@@ -1,22 +1,23 @@
 #!/bin/bash
 
-# Git clone the entire luci repository from immortalwrt
+# Git clone the entire luci repository from immortalwrt to a temporary directory
 pushd customfeeds
 
-# Clone luci repository only once
-git clone https://github.com/immortalwrt/luci
+# Clone luci repository into a temporary directory
+mkdir -p tem
+git clone https://github.com/immortalwrt/luci tem/luci
 
 # Add luci-app-eqos
-mv luci/applications/luci-app-eqos ./luci/applications/
+mv tem/luci/applications/luci-app-eqos ./luci/applications/
 
 # Add luci-proto-modemmanager
-mv luci/protocols/luci-proto-modemmanager ./luci/protocols/
+mv tem/luci/protocols/luci-proto-modemmanager ./luci/protocols/
 
 # Add luci-app-gowebdav
-mv luci/applications/luci-app-gowebdav ./luci/applications/
+mv tem/luci/applications/luci-app-gowebdav ./luci/applications/
 
-# Clean up: remove the rest of luci repository
-rm -rf luci
+# Clean up: remove the temporary luci repository
+rm -rf tem
 
 # Add gowebdav package from packages repository
 git clone https://github.com/immortalwrt/packages
