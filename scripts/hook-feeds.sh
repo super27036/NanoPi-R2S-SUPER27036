@@ -8,13 +8,19 @@ mkdir -p tem
 git clone https://github.com/immortalwrt/luci tem/luci
 
 # Add luci-app-eqos
+rm -rf ./luci/applications/luci-app-eqos  # 删除已有目录
 mv tem/luci/applications/luci-app-eqos ./luci/applications/
 
 # Add luci-proto-modemmanager
+rm -rf ./luci/protocols/luci-proto-modemmanager  # 删除已有目录
 mv tem/luci/protocols/luci-proto-modemmanager ./luci/protocols/
 
-# Add luci-app-gowebdav
-mv tem/luci/applications/luci-app-gowebdav ./luci/applications/
+# Add luci-app-gowebdav (检查该目录是否存在)
+if [ -d "tem/luci/applications/luci-app-gowebdav" ]; then
+    mv tem/luci/applications/luci-app-gowebdav ./luci/applications/
+else
+    echo "luci-app-gowebdav does not exist in tem/luci/applications"
+fi
 
 # Clean up: remove the temporary luci repository
 rm -rf tem
