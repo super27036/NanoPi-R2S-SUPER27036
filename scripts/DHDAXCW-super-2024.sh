@@ -51,9 +51,9 @@ git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
 git clone --depth=1 https://github.com/vernesong/OpenClash
 
 # Add ddnsto & linkease
-git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages-luci.git
-cd nas-packages-luci
-git sparse-checkout set luci/luci-app-linkease
+# git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages-luci.git
+# cd nas-packages-luci
+# git sparse-checkout set luci/luci-app-linkease
 
 git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages.git
 cd nas-packages
