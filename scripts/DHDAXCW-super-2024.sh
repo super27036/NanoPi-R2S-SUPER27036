@@ -50,15 +50,6 @@ git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
 # Add OpenClash
 git clone --depth=1 https://github.com/vernesong/OpenClash
 
-# Add ddnsto & linkease
-# git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages-luci.git
-# cd nas-packages-luci
-# git sparse-checkout set luci/luci-app-linkease
-
-git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages.git
-cd nas-packages
-git sparse-checkout set network/services/ddnsto
-
 # Add subconverter
 git clone --depth=1 https://github.com/tindy2013/openwrt-subconverter
 
