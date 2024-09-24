@@ -32,11 +32,10 @@ git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon ../..
 # 克隆新的 luci-app-argon-config
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config ../../customfeeds/luci/applications/luci-app-argon-config
 
-
-# Add luci-app-passwall
-git clone https://github.com/xiaorouji/openwrt-passwall passwall
-git clone https://github.com/xiaorouji/openwrt-passwall2 passwall2
-git clone https://github.com/xiaorouji/openwrt-passwall-packages passwall-packages
+# Add luci-app-passwall 在hook-feeds.sh中尝试添加，看能不能成功安装
+# git clone https://github.com/xiaorouji/openwrt-passwall passwall
+# git clone https://github.com/xiaorouji/openwrt-passwall2 passwall2
+# git clone https://github.com/xiaorouji/openwrt-passwall-packages passwall-packages
 
 # Add luci-app-ssr-plus
 git clone --depth=1 https://github.com/fw876/helloworld
