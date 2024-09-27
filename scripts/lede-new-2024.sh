@@ -63,7 +63,8 @@ git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
 # git sparse-checkout set luci-app-openclash
 
 # 直接克隆 OpenClash
-git clone --depth=1 https://github.com/vernesong/OpenClash
+git clone --depth=1 https://github.com/super27034/OpenClash.git
+# git clone --depth=1 https://github.com/vernesong/OpenClash
 
 # 添加 ddnsto & linkease
 # git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages-luci.git
