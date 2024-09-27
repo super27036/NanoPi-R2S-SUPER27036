@@ -48,7 +48,8 @@ git clone --depth=1 https://github.com/super27035/luci-app-vssr
 git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
 
 # Add OpenClash
-git clone --depth=1 https://github.com/vernesong/OpenClash
+git clone --depth=1 https://github.com/super27034/OpenClash.git
+# git clone --depth=1 https://github.com/vernesong/OpenClash
 
 # Add subconverter
 git clone --depth=1 https://github.com/tindy2013/openwrt-subconverter
