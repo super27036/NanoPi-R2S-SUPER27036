@@ -93,8 +93,8 @@ sed -i 's/$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/$1$S2TRFyMU$E8fE0RRK
 # Disable IPv6
 sed -i 's/def_bool y/def_bool n/g' config/Config-build.in
 
-# Fix uboot problem
-sed -i '/^UBOOT_TARGETS := rk3528-evb rk3588-evb/s/^/#/' package/boot/uboot-rk35xx/Makefile
+# Fix uboot problem (DHDAXCW 版本不需要这个操作，lede版本需要）
+# sed -i '/^UBOOT_TARGETS := rk3528-evb rk3588-evb/s/^/#/' package/boot/uboot-rk35xx/Makefile
 
 # Fan control scripts
 sed -i "s/enabled '0'/enabled '1'/g" feeds/packages/utils/irqbalance/files/irqbalance.config
