@@ -6,9 +6,9 @@
 pushd customfeeds
 
 # Add luci-app-passwall
-git clone https://github.com/xiaorouji/openwrt-passwall luci/applications/passwall #这里特意要把它的保存地址放在luci下面，和下面Set to local feeds的命令相呼应
-git clone https://github.com/xiaorouji/openwrt-passwall2 luci/applications/passwall2 #这里特意要把它的保存地址放在luci下面，和下面Set to local feeds的命令相呼应
-git clone https://github.com/xiaorouji/openwrt-passwall-packages packages/passwall-packages #这里特意要把它的保存地址放在packages下面，和下面Set to local feeds的命令相呼应
+#git clone https://github.com/xiaorouji/openwrt-passwall luci/applications/passwall #这里特意要把它的保存地址放在luci下面，和下面Set to local feeds的命令相呼应
+#git clone https://github.com/xiaorouji/openwrt-passwall2 luci/applications/passwall2 #这里特意要把它的保存地址放在luci下面，和下面Set to local feeds的命令相呼应
+#git clone https://github.com/xiaorouji/openwrt-passwall-packages packages/passwall-packages #这里特意要把它的保存地址放在packages下面，和下面Set to local feeds的命令相呼应
 
 # Add luci-app-eqos
 # svn co https://github.com/immortalwrt/luci/trunk/applications/luci-app-eqos luci/applications/luci-app-eqos
