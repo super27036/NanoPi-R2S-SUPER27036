@@ -68,10 +68,10 @@ git clone --depth=1 https://github.com/lisaac/luci-app-dockerman
 git clone --depth=1 https://github.com/lisaac/luci-lib-docker
 
 # Add luci-app-irqbalance
-git clone --depth=1 --filter=blob:none --sparse https://github.com/QiuSimons/OpenWrt-Add.git
-cd OpenWrt-Add
-git sparse-checkout set luci-app-irqbalance
-cd ..
+# git clone --depth=1 --filter=blob:none --sparse https://github.com/QiuSimons/OpenWrt-Add.git
+# cd OpenWrt-Add
+# git sparse-checkout set luci-app-irqbalance
+# cd ..
 
 # Fix mt76 wireless driver （没用）
 # pushd package/kernel/mt76
