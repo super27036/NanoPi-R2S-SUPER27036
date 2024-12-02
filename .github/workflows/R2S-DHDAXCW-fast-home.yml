@@ -7,11 +7,11 @@
 
 name: R2S-DHDAXCW-fast-home
 
-on: 
-  repository_dispatch:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 5 1 * *' # 5 am every month
+# on: 
+#   repository_dispatch:
+#   workflow_dispatch:
+#   schedule:
+#    - cron: '0 5 1 * *' # 5 am every month
 
 env:
   REPO_URL: https://github.com/DHDAXCW/lede-rockchip
