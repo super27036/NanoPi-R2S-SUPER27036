@@ -16,7 +16,7 @@ on:
     - cron: '0 5 1 * *' # 5 am every month
 
 env:
-  REPO_URL: https://github.com/DHDAXCW/lede-rockchip
+  REPO_URL: https://github.com/super27036/DHDAXCW-lede-rockchip.git
   REPO_BRANCH: stable
   CONFIG_FILE: configs/lean/DHDAXCW-super-2024.config
   DIY_SH: scripts/DHDAXCW-super-2024.sh
