@@ -118,29 +118,28 @@ jobs:
     - name: Change Default Settings and Verify
       run: |
         # Change default shell to zsh
-        echo "Verifying shell replacement in passwd:"
+        echo "YES shell to zsh"
         grep '/usr/bin/zsh' $OPENWRTROOT/package/base-files/files/etc/passwd || echo "Replacement failed!"
 
         # Modify default IP
-        echo "Verifying IP replacement in config_generate:"
+        echo "Yes IP"
         grep '192.168.5.1' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
 
         # Modify default hostname
-        echo "Verifying hostname replacement in config_generate:"
+        echo "YES SUPERouter"
         grep 'SUPERouter' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
 
         # Password change
-        echo "Verifying password replacement in zzz-default-settings:"
+        echo "YES password"
         grep '$1$S2TRFyMU$E8fE0RRKR0jNadn3YLrSQ0' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Replacement failed!"
 
         # Disable IPv6
-        echo "Verifying IPv6 disable in Config-build.in:"
+        echo "NO IPv6"
         grep 'def_bool n' $OPENWRTROOT/config/Config-build.in || echo "Replacement failed!"
 
         # Verify SUPER-DHDAXCW in zzz-default-settings
-        echo "Verifying 'SUPER-DHDAXCW' in zzz-default-settings:"
+        echo "YES 'SUPER-DHDAXCW'"
         grep 'SUPER-DHDAXCW' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Verification failed: 'SUPER-DHDAXCW' not found!"
-
         
     - name: Download Package
       id: package
