@@ -118,27 +118,22 @@ jobs:
     - name: Change Default Settings and Verify
       run: |
         # Change default shell to zsh
-        sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' $OPENWRTROOT/package/base-files/files/etc/passwd
         echo "Verifying shell replacement in passwd:"
         grep '/usr/bin/zsh' $OPENWRTROOT/package/base-files/files/etc/passwd || echo "Replacement failed!"
 
         # Modify default IP
-        sed -i 's/192.168.1.1/192.168.5.1/g' $OPENWRTROOT/package/base-files/files/bin/config_generate
         echo "Verifying IP replacement in config_generate:"
         grep '192.168.5.1' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
 
         # Modify default hostname
-        sed -i 's/OpenWrt/SUPERouter/g' $OPENWRTROOT/package/base-files/files/bin/config_generate
         echo "Verifying hostname replacement in config_generate:"
         grep 'SUPERouter' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
 
         # Password change
-        sed -i 's/$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/$1$S2TRFyMU$E8fE0RRKR0jNadn3YLrSQ0:18690:0:99999:7:::/g' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings
         echo "Verifying password replacement in zzz-default-settings:"
         grep '$1$S2TRFyMU$E8fE0RRKR0jNadn3YLrSQ0' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Replacement failed!"
 
         # Disable IPv6
-        sed -i 's/def_bool y/def_bool n/g' $OPENWRTROOT/config/Config-build.in
         echo "Verifying IPv6 disable in Config-build.in:"
         grep 'def_bool n' $OPENWRTROOT/config/Config-build.in || echo "Replacement failed!"
 
