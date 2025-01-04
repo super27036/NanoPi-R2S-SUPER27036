@@ -136,6 +136,10 @@ jobs:
         # Disable IPv6
         echo "Verifying IPv6 disable in Config-build.in:"
         grep 'def_bool n' $OPENWRTROOT/config/Config-build.in || echo "Replacement failed!"
+
+        # Verify SUPER-DHDAXCW in zzz-default-settings
+        echo "Verifying 'SUPER-DHDAXCW' in zzz-default-settings:"
+        grep 'SUPER-DHDAXCW' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Verification failed: 'SUPER-DHDAXCW' not found!"
         
     - name: Download Package
       id: package
