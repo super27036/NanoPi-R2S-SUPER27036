@@ -42,10 +42,10 @@ cd OpenWrt-Add
 git sparse-checkout set luci-app-irqbalance
 
 # 添加 Passwall
-mkdir passwall passwall2 passwall-packages 
-git clone https://github.com/xiaorouji/openwrt-passwall passwall
-git clone https://github.com/xiaorouji/openwrt-passwall2 passwall2
-git clone https://github.com/xiaorouji/openwrt-passwall-packages passwall-packages
+# mkdir passwall passwall2 passwall-packages 
+# git clone https://github.com/xiaorouji/openwrt-passwall passwall
+# git clone https://github.com/xiaorouji/openwrt-passwall2 passwall2
+# git clone https://github.com/xiaorouji/openwrt-passwall-packages passwall-packages
 
 # 添加 SSR-Plus
 git clone --depth=1 https://github.com/fw876/helloworld
@@ -63,16 +63,17 @@ git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
 # git sparse-checkout set luci-app-openclash
 
 # 直接克隆 OpenClash
-git clone --depth=1 https://github.com/vernesong/OpenClash
+git clone --depth=1 https://github.com/super27034/OpenClash.git
+# git clone --depth=1 https://github.com/vernesong/OpenClash
 
 # 添加 ddnsto & linkease
-git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages-luci.git
-cd nas-packages-luci
-git sparse-checkout set luci/luci-app-linkease
+# git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages-luci.git
+# cd nas-packages-luci
+#git sparse-checkout set luci/luci-app-linkease
 
-git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages.git
-cd nas-packages
-git sparse-checkout set network/services/ddnsto
+# git clone --depth=1 --filter=blob:none --sparse https://github.com/linkease/nas-packages.git
+# cd nas-packages
+# git sparse-checkout set network/services/ddnsto
 
 # 添加新的 Argon 主题及配置
 # mkdir luci-theme-argon luci-app-argon-config

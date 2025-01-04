@@ -6,21 +6,20 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: R2S-lede-super-work
+name: R2S-DHDAXCW-docker-home
 
 on: 
   repository_dispatch:
   workflow_dispatch:
 
-  schedule:
-    - cron: '0 9 2 * *' # china time 1pm every Monday
-
+#  schedule:
+#    - cron: '0 5 1 * *' # 5 am every month
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
-  CONFIG_FILE: configs/lean/lede-new-2024.config
-  DIY_SH: scripts/lede-new-2024.sh
+  REPO_URL: https://github.com/DHDAXCW/lede-rockchip
+  REPO_BRANCH: stable
+  CONFIG_FILE: configs/lean/DHDAXCW-docker-2024.config
+  DIY_SH: scripts/DHDAXCW-docker-2024.sh
   KMODS_IN_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
@@ -28,7 +27,7 @@ env:
 jobs:
   Build:
     runs-on: ubuntu-22.04
-    if: github.repository == 'super27035/NanoPi-R2S-SUPER27034'
+    if: github.repository == 'super27036/NanoPi-R2S-SUPER27034'
     permissions:
       contents: write
       packages: write
@@ -48,8 +47,7 @@ jobs:
         # this might remove tools that are actually needed,
         # if set to "true" but frees about 6 GB
         tool-cache: true
-        # tool-cache: true is good
-
+        
         # all of these default to true, but feel free to set to
         # "false" if necessary for your workflow
         codeql-images: true
@@ -58,7 +56,6 @@ jobs:
         dotnet: true
         haskell: true
         large-packages: false
-        # not good
         docker-images: true
         swap-storage: true
         
@@ -71,13 +68,7 @@ jobs:
       run: |
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
-        bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib \
-        git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev \
-        libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev \
-        libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 \
-        python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo \
-        uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
+        sudo -E apt-get -qq install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex g++-multilib gawk gcc-multilib gettext git gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs unzip upx-ucl vim vpnc wget xmlto xxd zlib1g-dev
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
@@ -97,11 +88,11 @@ jobs:
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
         echo "OPENWRTROOT=$PWD" >> $GITHUB_OUTPUT
         mkdir customfeeds
-        git clone --depth=1 https://github.com/coolsnowwolf/packages customfeeds/packages
-        git clone --depth=1 https://github.com/coolsnowwolf/luci customfeeds/luci
+        git clone --depth=1 https://github.com/DHDAXCW/packages customfeeds/packages
+        git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
         chmod +x ../scripts/*.sh
         ../scripts/hook-feeds.sh
-    
+
     - name: Install Feeds
       run: |
         cd $OPENWRTROOT
@@ -110,7 +101,7 @@ jobs:
     - name: Copy FILES
       run: |
         cd $OPENWRTROOT
-        cp -rf ../PATCH/super-work-files/files ./files
+        cp -rf ../PATCH/super-home-files/files ./files
         
     - name: Load Custom Configuration
       run: |
@@ -192,11 +183,11 @@ jobs:
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
         rm -rf config.buildinfo
         rm -rf packages-server.zip
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz lede-super-work-local-r2s-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz lede-super-work-local-r2s-squashfs-sysupgrade-$(date +"%Y%m%d").img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz DHDAXCW-docker-home-r2s-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DHDAXCW-docker-home-r2s-squashfs-$(date +"%Y%m%d").img.gz
         popd
         make checksum
-        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/lede-super-work-local-sha256sums
+        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DHDAXCW-docker-home-sha256sums
         echo "GENERATE_STATUS=success" >> $GITHUB_OUTPUT
     - name: Generate release tag
       id: tag
@@ -208,7 +199,7 @@ jobs:
           echo "此固件为自己私用，请勿下载使用
                 lede = 使用coolsnowwolf的lede仓库
                 DHDAXCW = 使用DHDAXCW的修改后仓库
-                slim-local = 精简版
+                slim = 精简版
                 stable = 稳定版" >> release.txt
           echo "status=success" >> $GITHUB_OUTPUT
           
