@@ -110,9 +110,32 @@ jobs:
         chmod +x scripts/*.sh
         cd $OPENWRTROOT
         ../$DIY_SH
+        ../scripts/modify-default.sh
         ../scripts/preset-clash-core.sh arm64
         ../scripts/preset-terminal-tools.sh
         make defconfig
+
+    - name: Change Default Settings and Verify
+      run: |
+        # Change default shell to zsh
+        echo "Verifying shell replacement in passwd:"
+        grep '/usr/bin/zsh' $OPENWRTROOT/package/base-files/files/etc/passwd || echo "Replacement failed!"
+
+        # Modify default IP
+        echo "Verifying IP replacement in config_generate:"
+        grep '192.168.5.1' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
+
+        # Modify default hostname
+        echo "Verifying hostname replacement in config_generate:"
+        grep 'SUPERouter' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
+
+        # Password change
+        echo "Verifying password replacement in zzz-default-settings:"
+        grep '$1$S2TRFyMU$E8fE0RRKR0jNadn3YLrSQ0' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Replacement failed!"
+
+        # Disable IPv6
+        echo "Verifying IPv6 disable in Config-build.in:"
+        grep 'def_bool n' $OPENWRTROOT/config/Config-build.in || echo "Replacement failed!"
         
     - name: Download Package
       id: package
