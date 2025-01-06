@@ -1,0 +1,13 @@
+0 4 * * * /etc/coremark.sh
+3 3 12 12 * /usr/bin/nginx-util 'check_ssl'
+*/40 * * * * /etc/init.d/frp restart
+0 0 * * 1 /usr/share/openclash/openclash.sh
+  
+# 15 0 1 10 2025 chmod +x /etc/openclash_off.sh && /etc/openclash_off.sh
+# 15 0 1 10 2025 chmod +x /etc/openclash_on.sh && /etc/openclash_on.sh
+# 解释：
+# 15表示15分钟
+# 0表示0时（即凌晨）
+# 1表示1号
+# 10表示10月
+# 2025表示2025年
