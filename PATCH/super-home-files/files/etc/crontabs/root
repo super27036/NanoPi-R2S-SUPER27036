@@ -4,7 +4,7 @@
 0 0 * * 1 /usr/share/openclash/openclash.sh
   
 # 15 0 1 10 2025 chmod +x /etc/openclash_off.sh && /etc/openclash_off.sh
-# 15 0 1 10 2025 chmod +x /etc/openclash_off.sh && /etc/openclash_on.sh
+# 15 0 1 10 2025 chmod +x /etc/openclash_on.sh && /etc/openclash_on.sh
 # 解释：
 # 15表示15分钟
 # 0表示0时（即凌晨）
