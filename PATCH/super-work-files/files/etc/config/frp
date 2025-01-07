@@ -27,7 +27,7 @@ config proxy
 	option proxy_protocol_version 'disable'
 	option use_encryption '1'
 	option use_compression '1'
-	option remark 'R2S Test'
+	option remark 'R2S test'
 
 config proxy
 	option enable '1'
@@ -39,4 +39,4 @@ config proxy
 	option proxy_protocol_version 'disable'
 	option use_encryption '1'
 	option use_compression '1'
-	option remark 'R2S Test Clash'
+	option remark 'R2S test clash'
