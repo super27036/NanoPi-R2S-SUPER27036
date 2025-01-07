@@ -1,4 +1,4 @@
-#*/10 * * * * [ "$(date +\%Y\%m\%d%H)" -ge "2025100110" ] && chmod +x /etc/openclash_off.sh && /etc/openclash_off.sh
+# */10 * * * * [ "$(date +\%Y\%m\%d%H)" -ge "2025100110" ] && chmod +x /etc/openclash_off.sh && /etc/openclash_off.sh
 # date +%Y%m%d%H：获取当前时间，格式为 YYYYMMDDHH，表示“年-月-日-小时”。
 
 # 15 0 1 10 2025 chmod +x /etc/openclash_off.sh && /etc/openclash_off.sh
