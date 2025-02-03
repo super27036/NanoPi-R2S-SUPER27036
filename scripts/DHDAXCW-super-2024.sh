@@ -39,7 +39,6 @@ git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config 
 
 # Add luci-app-ssr-plus
 git clone --depth=1 https://github.com/fw876/helloworld
-# git clone --depth=1 https://github.com/super27034/helloworld.git
 
 # Add luci-app-vssr <M>
 git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb.git
