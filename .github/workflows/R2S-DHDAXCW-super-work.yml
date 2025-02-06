@@ -16,7 +16,7 @@ on:
     - cron: '0 9 1 * *' # 1 am every month
 
 env:
-  REPO_URL: https://github.com/DHDAXCW/lede-rockchip
+  REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: stable
   CONFIG_FILE: configs/lean/DHDAXCW-super-2024.config
   DIY_SH: scripts/DHDAXCW-super-2024.sh
@@ -94,8 +94,8 @@ jobs:
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
         echo "OPENWRTROOT=$PWD" >> $GITHUB_OUTPUT
         mkdir customfeeds
-        git clone --depth=1 https://github.com/DHDAXCW/packages customfeeds/packages
-        git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
+        git clone --depth=1 https://github.com/coolsnowwolf/packages customfeeds/packages
+        git clone --depth=1 https://github.com/coolsnowwolf/luci customfeeds/luci
         chmod +x ../scripts/*.sh
         ../scripts/hook-feeds.sh
 
