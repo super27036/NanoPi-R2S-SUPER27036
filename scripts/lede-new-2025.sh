@@ -88,7 +88,7 @@ sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 # sed -i 's/def_bool y/def_bool n/g' config/Config-build.in
 #---------以上部分改到了modify-default.sh文件里面执行
 
-Fix uboot problem (DHDAXCW 版本不需要这个操作，lede版本需要）
+# Fix uboot problem (DHDAXCW 版本不需要这个操作，lede版本需要）
 sed -i '/^UBOOT_TARGETS := rk3528-evb rk3588-evb/s/^/#/' package/boot/uboot-rk35xx/Makefile
 
 # Fan control scripts
