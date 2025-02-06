@@ -1,4 +1,5 @@
 #这个脚本是额外添加一些应用，分别保存到新创建的luci和package里面，然后将feeds.conf.default里面含luci和package的两行都替换到这两个新建的源。
+#feeds.conf.default 这个文件夹在这里： https://github.com/DHDAXCW/lede-rockchip/blob/stable/feeds.conf.default
 #注意的是，feeds.conf.default里面的luci和package已经在上一步执行了
 #!/bin/bash
 
