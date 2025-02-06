@@ -17,7 +17,7 @@ on:
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: stable
+  REPO_BRANCH: master
   CONFIG_FILE: configs/lean/DHDAXCW-super-2024.config
   DIY_SH: scripts/DHDAXCW-super-2024.sh
   KMODS_IN_FIRMWARE: true
