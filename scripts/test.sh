@@ -12,14 +12,8 @@ mkdir -p package/community
 pushd package/community
 
 # Add Lienol's Packages
-git clone --depth=1 https://github.com/Lienol/openwrt-package
-rm -rf ../../customfeeds/luci/applications/luci-app-kodexplorer
-rm -rf openwrt-package/verysync
-rm -rf openwrt-package/luci-app-verysync
 
 # Add luci-app-unblockneteasemusic
-# rm -rf ../../customfeeds/luci/applications/luci-app-unblockmusic
-# git clone --depth=1 https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git
 
 # 删除旧的 luci-theme-argon 和 luci-theme-argon-mod 和 luci-app-argon-config
 rm -rf ../../customfeeds/luci/themes/luci-theme-argon-mod
@@ -32,20 +26,11 @@ git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon ../..
 # 克隆新的 luci-app-argon-config
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config ../../customfeeds/luci/applications/luci-app-argon-config
 
-# Add luci-app-passwall 在hook-feeds.sh中尝试添加，看能不能成功安装
-# git clone https://github.com/xiaorouji/openwrt-passwall passwall
-# git clone https://github.com/xiaorouji/openwrt-passwall2 passwall2
-# git clone https://github.com/xiaorouji/openwrt-passwall-packages passwall-packages
-
 # Add luci-app-ssr-plus
-git clone --depth=1 https://github.com/fw876/helloworld
 
 # Add luci-app-vssr <M>
-git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb.git
-git clone --depth=1 https://github.com/super27035/luci-app-vssr
 
 # Add luci-proto-minieap
-git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
 
 # Add OpenClash
 git clone --depth=1 https://github.com/super27034/OpenClash.git
