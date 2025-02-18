@@ -19,7 +19,7 @@ env:
   REPO_URL: https://github.com/DHDAXCW/lede-rockchip
   REPO_BRANCH: stable
   CONFIG_FILE: configs/lean/test.config
-  DIY_SH: scripts/DHDAXCW-super-2024.sh
+  DIY_SH: scripts/test.sh
   KMODS_IN_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
