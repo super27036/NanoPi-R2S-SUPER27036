@@ -46,14 +46,14 @@ git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb.git
 git clone --depth=1 https://github.com/super27035/luci-app-vssr
 
 # Add luci-proto-minieap
-git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
+# git clone --depth=1 https://github.com/ysc3839/luci-proto-minieap
 
 # Add OpenClash
 git clone --depth=1 https://github.com/super27034/OpenClash.git
 # git clone --depth=1 https://github.com/vernesong/OpenClash
 
 # Add subconverter
-git clone --depth=1 https://github.com/tindy2013/openwrt-subconverter
+# git clone --depth=1 https://github.com/tindy2013/openwrt-subconverter
 
 # Add luci-app-poweroff
 git clone --depth=1 https://github.com/esirplayground/luci-app-poweroff
