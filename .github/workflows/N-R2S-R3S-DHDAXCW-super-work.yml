@@ -122,7 +122,7 @@ jobs:
         echo "${{ matrix.device }} build completed"
 
     - name: Upload firmware to artifacts
-      uses: actions/upload-artifact@v4  # 升级到 v4
+      uses: actions/upload-artifact@v4
       with:
         name: firmware-${{ matrix.device }}
         path: |
@@ -135,7 +135,7 @@ jobs:
     if: ${{ env.UPLOAD_RELEASE == 'true' && !cancelled() }}
     steps:
     - name: Download artifacts
-      uses: actions/download-artifact@v4  # 升级到 v4
+      uses: actions/download-artifact@v4
       with:
         path: artifacts
 
@@ -162,23 +162,4 @@ jobs:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: |
-          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-ext4-sysupgrade-*.img.gz
-          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-squashfs-*.img.gz
-          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-ext4-sysupgrade-*.img.gz
-          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-squashfs-*.img.gz
-
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.2.1
-      if: ${{ env.UPLOAD_RELEASE == 'true' && !cancelled() }}
-      with:
-        keep_latest: 20
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Delete Artifacts
-      uses: geekyeggo/delete-artifact@v2
-      with:
-        name: |
-          firmware-r2s
-          firmware-r3s
+          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-ext4-sysupgrade-*.img
