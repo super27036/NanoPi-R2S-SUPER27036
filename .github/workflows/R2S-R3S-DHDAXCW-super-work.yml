@@ -17,8 +17,8 @@ on:
 env:
   REPO_URL: https://github.com/DHDAXCW/lede-rockchip
   REPO_BRANCH: stable
-  CONFIG_FILE_R2S: configs/lean/DHDAXCW-super-2024.config       # R2S 配置文件
-  CONFIG_FILE_R3S: configs/lean/DHDAXCW-super-2024-r3s.config  # R3S 配置文件
+  CONFIG_FILE_R2S: configs/lean/DHDAXCW-super-2024.config
+  CONFIG_FILE_R3S: configs/lean/DHDAXCW-super-2024-r3s.config
   DIY_SH: scripts/DHDAXCW-super-2024.sh
   KMODS_IN_FIRMWARE: true
   UPLOAD_RELEASE: true
@@ -49,7 +49,7 @@ jobs:
         swap-storage: true
         
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Initialization environment
       env:
@@ -96,7 +96,7 @@ jobs:
       run: |
         echo "Building R2S Firmware"
         cd $OPENWRTROOT
-        [ -e $CONFIG_FILE_R2S ] && mv $CONFIG_FILE_R2S $OPENWRTROOT/.config
+        [ -e $CONFIG_FILE_R2S ] && mv $CONFIG_FILE_R2S $OPENWRTROOT/.config || echo "Error: R2S config file not found!"
         chmod +x ../scripts/*.sh
         ../$DIY_SH
         ../scripts/modify-default.sh
@@ -104,17 +104,23 @@ jobs:
         ../scripts/preset-terminal-tools.sh
         make defconfig
         make download -j8
-        make -j$(nproc) || make -j1 V=s
-        mv bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz DHDAXCW-super-home-r2s-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
-        mv bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DHDAXCW-super-home-r2s-squashfs-$(date +"%Y%m%d").img.gz
+        make V=s -j1  # 单线程编译，显示详细日志
+        echo "Listing generated files for R2S:"
+        ls -lh bin/targets/rockchip/armv8/ || echo "Directory not found!"
+        if [ -f bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz ]; then
+          mv bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz DHDAXCW-super-home-r2s-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
+          mv bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DHDAXCW-super-home-r2s-squashfs-$(date +"%Y%m%d").img.gz
+        else
+          echo "Warning: R2S ext4-sysupgrade firmware not found, continuing to R3S..."
+        fi
         echo "R2S build completed"
 
     - name: Build R3S Firmware
       run: |
         echo "Building R3S Firmware"
         cd $OPENWRTROOT
-        git reset --hard  # 重置代码以清除 R2S 编译的影响
-        [ -e $CONFIG_FILE_R3S ] && mv $CONFIG_FILE_R3S $OPENWRTROOT/.config
+        git reset --hard
+        [ -e $CONFIG_FILE_R3S ] && mv $CONFIG_FILE_R3S $OPENWRTROOT/.config || echo "Error: R3S config file not found!"
         chmod +x ../scripts/*.sh
         ../$DIY_SH
         ../scripts/modify-default.sh
@@ -122,9 +128,16 @@ jobs:
         ../scripts/preset-terminal-tools.sh
         make defconfig
         make download -j8
-        make -j$(nproc) || make -j1 V=s
-        mv bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r3s-ext4-sysupgrade.img.gz DHDAXCW-super-home-r3s-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
-        mv bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r3s-squashfs-sysupgrade.img.gz DHDAXCW-super-home-r3s-squashfs-$(date +"%Y%m%d").img.gz
+        make V=s -j1  # 单线程编译，显示详细日志
+        echo "Listing generated files for R3S:"
+        ls -lh bin/targets/rockchip/armv8/ || echo "Directory not found!"
+        if [ -f bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r3s-ext4-sysupgrade.img.gz ]; then
+          mv bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r3s-ext4-sysupgrade.img.gz DHDAXCW-super-home-r3s-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
+          mv bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r3s-squashfs-sysupgrade.img.gz DHDAXCW-super-home-r3s-squashfs-$(date +"%Y%m%d").img.gz
+        else
+          echo "Error: R3S ext4-sysupgrade firmware not found!"
+          exit 1
+        fi
         echo "R3S build completed"
 
     - name: Generate release tag
