@@ -18,7 +18,7 @@ env:
   REPO_URL: https://github.com/DHDAXCW/lede-rockchip
   REPO_BRANCH: stable
   CONFIG_FILE_R2S: configs/lean/DHDAXCW-super-2024.config       # R2S 配置文件
-  CONFIG_FILE_R3S: configs/lean/DHDAXCW-super-2024-r3s.config  # R3S 配置文件（需新增）
+  CONFIG_FILE_R3S: configs/lean/DHDAXCW-super-2024-r3s.config  # R3S 配置文件
   DIY_SH: scripts/DHDAXCW-super-2024.sh
   KMODS_IN_FIRMWARE: true
   UPLOAD_RELEASE: true
@@ -34,11 +34,6 @@ jobs:
       
     outputs:
       OPENWRTROOT: ${{ steps.update.outputs.OPENWRTROOT }}
-      PLATFORM: ${{ steps.compile.outputs.PLATFORM }}
-      TARGET: ${{ steps.compile.outputs.TARGET }}
-      SUBTARGET: ${{ steps.compile.outputs.SUBTARGET }}
-      FIRMWARE: ${{ steps.compile.outputs.FIRMWARE }}
-      GENERATE_STATUS: ${{ steps.generate.outputs.GENERATE_STATUS }}
 
     steps:
     - name: Free Disk Space (Ubuntu)
@@ -97,12 +92,10 @@ jobs:
         cd $OPENWRTROOT
         cp -rf ../PATCH/super-home-files/files ./files
         
-    # 为 R2S 和 R3S 分别编译固件
     - name: Build R2S Firmware
       run: |
         echo "Building R2S Firmware"
         cd $OPENWRTROOT
-        [ -e files ] && mv files $OPENWRTROOT/files
         [ -e $CONFIG_FILE_R2S ] && mv $CONFIG_FILE_R2S $OPENWRTROOT/.config
         chmod +x ../scripts/*.sh
         ../$DIY_SH
@@ -136,7 +129,7 @@ jobs:
 
     - name: Generate release tag
       id: tag
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      if: ${{ env.UPLOAD_RELEASE == 'true' && !cancelled() }}
       run: |
         echo "release_tag=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
         echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
@@ -150,7 +143,7 @@ jobs:
 
     - name: Upload firmware to release
       uses: softprops/action-gh-release@v1
-      if: steps.tag.outputs.status == 'success' && !cancelled()
+      if: ${{ steps.tag.outputs.status == 'success' && !cancelled() }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -165,7 +158,7 @@ jobs:
 
     - name: Remove old Releases
       uses: dev-drprasad/delete-older-releases@v0.2.1
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      if: ${{ env.UPLOAD_RELEASE == 'true' && !cancelled() }}
       with:
         keep_latest: 20
         delete_tags: true
