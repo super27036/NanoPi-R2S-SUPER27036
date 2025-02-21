@@ -122,9 +122,63 @@ jobs:
         echo "${{ matrix.device }} build completed"
 
     - name: Upload firmware to artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4  # 升级到 v4
       with:
         name: firmware-${{ matrix.device }}
         path: |
           ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-ext4-sysupgrade-*.img.gz
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-squ
+          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-squashfs-*.img.gz
+
+  Release:
+    needs: Build
+    runs-on: ubuntu-22.04
+    if: ${{ env.UPLOAD_RELEASE == 'true' && !cancelled() }}
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4  # 升级到 v4
+      with:
+        path: artifacts
+
+    - name: Generate release tag
+      id: tag
+      run: |
+        echo "release_tag=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
+        echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
+        touch release.txt
+        echo "此固件为自己私用，请勿下载使用
+              lede = 使用coolsnowwolf的lede仓库
+              DHDAXCW = 使用DHDAXCW的修改后仓库
+              slim = 精简版
+              stable = 稳定版" >> release.txt
+        echo "status=success" >> $GITHUB_OUTPUT
+
+    - name: Upload firmware to release
+      uses: softprops/action-gh-release@v1
+      if: ${{ steps.tag.outputs.status == 'success' && !cancelled() }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        name: ${{ steps.tag.outputs.release_date }} NanoPi-R2S-R3S-linux.5.4_固件下载
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: |
+          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-ext4-sysupgrade-*.img.gz
+          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-squashfs-*.img.gz
+          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-ext4-sysupgrade-*.img.gz
+          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-squashfs-*.img.gz
+
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.2.1
+      if: ${{ env.UPLOAD_RELEASE == 'true' && !cancelled() }}
+      with:
+        keep_latest: 20
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Delete Artifacts
+      uses: geekyeggo/delete-artifact@v2
+      with:
+        name: |
+          firmware-r2s
+          firmware-r3s
