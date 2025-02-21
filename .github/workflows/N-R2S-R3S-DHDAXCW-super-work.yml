@@ -49,7 +49,7 @@ jobs:
         swap-storage: true
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4  # 升级到 v4，避免使用已废弃的版本
 
     - name: Initialization environment
       env:
@@ -77,11 +77,11 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
+        echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
 
     - name: Update Feeds
       run: |
-        cd openwrt
-        echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
+        cd $OPENWRTROOT
         mkdir customfeeds
         git clone --depth=1 https://github.com/DHDAXCW/packages customfeeds/packages
         git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
@@ -103,7 +103,6 @@ jobs:
         echo "Building ${{ matrix.device }} Firmware"
         cd $OPENWRTROOT
         CONFIG_FILE=configs/lean/DHDAXCW-super-2024-${{ matrix.device }}.config
-        [ -e files ] && mv files $OPENWRTROOT/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config
         chmod +x ../scripts/*.sh
         ../$DIY_SH
