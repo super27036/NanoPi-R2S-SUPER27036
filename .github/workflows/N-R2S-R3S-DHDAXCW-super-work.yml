@@ -112,7 +112,6 @@ jobs:
         ../scripts/preset-terminal-tools.sh
         make defconfig
         make download -j8
-        # 只编译目标相关部分，跳过完整构建
         make target/compile -j$(nproc) || make target/compile -j1 V=s
         make package/compile -j$(nproc) || make package/compile -j1 V=s
         make package/install -j$(nproc) || make package/install -j1 V=s
