@@ -26,7 +26,7 @@ env:
 jobs:
   Build:
     runs-on: ubuntu-22.04
-    if: github.repository == 'super27035/NanoPi-R2S-SUPER27034'  # 保持与 R2S 一致
+    if: github.repository == 'super27036/NanoPi-R2S-SUPER27034'  # 保持与 R2S 一致
     permissions:
       contents: write
       packages: write
