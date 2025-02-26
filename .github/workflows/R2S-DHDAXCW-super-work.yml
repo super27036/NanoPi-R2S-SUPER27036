@@ -1,17 +1,8 @@
-#=================================================
-# https://github.com/P3TERX/Actions-OpenWrt
-# Description: Build OpenWrt using GitHub Actions
-# Lisence: MIT
-# Author: P3TERX
-# Blog: https://p3terx.com
-#=================================================
-
 name: R2S-DHDAXCW-super-work
 
 on: 
   repository_dispatch:
   workflow_dispatch:
-
   schedule:
     - cron: '0 9 1 * *' # 1th every month
 
@@ -44,15 +35,9 @@ jobs:
     - name: Free Disk Space (Ubuntu)
       uses: gruve-p/free-disk-space@main
       with:
-        # this might remove tools that are actually needed,
-        # if set to "true" but frees about 6 GB
         tool-cache: true
-        
-        # all of these default to true, but feel free to set to
-        # "false" if necessary for your workflow
         codeql-images: true
         android: true
-        # android: true is good
         dotnet: true
         haskell: true
         large-packages: false
@@ -98,10 +83,12 @@ jobs:
         cd $OPENWRTROOT
         ./scripts/feeds install -a
 
-    - name: Copy FILES
+    - name: Clone Private Files Repository
       run: |
         cd $OPENWRTROOT
-        cp -rf ../PATCH/super-work-files/files ./files
+        git clone https://${{ secrets.FILES_TOKEN }}@github.com/super27034/Private-FILES.git private-files
+        cp -r private-files/PATCH/super-work-files/files ./files
+        rm -rf private-files
         
     - name: Load Custom Configuration
       run: |
@@ -205,7 +192,7 @@ jobs:
         make package/install -j$(nproc) || make package/install -j1 V=s
         make target/install -j$(nproc) || make target/install -j1 V=s
         pushd bin/targets/rockchip/armv8
-        #rm -rf **ext4**
+        rm -rf **ext4**
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s.manifest
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
         rm -rf config.buildinfo
@@ -216,42 +203,43 @@ jobs:
         make checksum
         mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DHDAXCW-super-work-sha256sums
         echo "GENERATE_STATUS=success" >> $GITHUB_OUTPUT
+
     - name: Generate release tag
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-          echo "release_tag=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
-          echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
-          touch release.txt
-          echo "此固件为自己私用，请勿下载使用
-                lede = 使用coolsnowwolf的lede仓库
-                DHDAXCW = 使用DHDAXCW的修改后仓库
-                slim = 精简版
-                stable = 稳定版" >> release.txt
-          echo "status=success" >> $GITHUB_OUTPUT
+        echo "RELEASE_TAG=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
+        echo "RELEASE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
+        touch release.txt
+        echo "此固件为自己私用，请勿下载使用
+              lede = 使用coolsnowwolf的lede仓库
+              DHDAXCW = 使用DHDAXCW的修改后仓库
+              slim = 精简版
+              stable = 稳定版" >> release.txt
+        echo "status=success" >> $GITHUB_OUTPUT
           
     - name: Upload firmware to release
       uses: softprops/action-gh-release@v1
       if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          name: ${{ steps.tag.outputs.release_date }} NanoPi-R2S-linux.5.4_固件下载
-          tag_name: ${{ steps.tag.outputs.release_tag }}
-          body_path: release.txt
-          files: ${{ env.FIRMWARE }}/*
+        name: ${{ steps.tag.outputs.RELEASE_DATE }} NanoPi-R2S-linux.5.4_固件下载
+        tag_name: ${{ steps.tag.outputs.RELEASE_TAG }}
+        body_path: release.txt
+        files: ${{ env.FIRMWARE }}/*
 
     - name: Remove old Releases
       uses: dev-drprasad/delete-older-releases@v0.2.1
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
-          keep_latest: 20
-          delete_tags: true
+        keep_latest: 20
+        delete_tags: true
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Delete Artifacts
       uses: geekyeggo/delete-artifact@v2
       with:
-         name: |
-            bin-archive
+        name: |
+          bin-archive
