@@ -192,13 +192,15 @@ jobs:
         make package/install -j$(nproc) || make package/install -j1 V=s
         make target/install -j$(nproc) || make target/install -j1 V=s
         pushd bin/targets/rockchip/armv8
+        ls -l  # 调试：查看生成的文件
         rm -rf **ext4**
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s.manifest
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
         rm -rf config.buildinfo
         rm -rf packages-server.zip
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz DHDAXCW-super-work-r2s-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DHDAXCW-super-work-r2s-squashfs-$(date +"%Y%m%d").img.gz
+        # 使用通配符匹配可能的固件文件
+        mv *ext4-sysupgrade.img.gz DHDAXCW-super-work-r2s-ext4-sysupgrade-$(date +"%Y%m%d").img.gz || echo "No ext4-sysupgrade file found"
+        mv *squashfs-sysupgrade.img.gz DHDAXCW-super-work-r2s-squashfs-$(date +"%Y%m%d").img.gz || echo "No squashfs-sysupgrade file found"
         popd
         make checksum
         mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DHDAXCW-super-work-sha256sums
