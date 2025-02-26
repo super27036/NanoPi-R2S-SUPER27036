@@ -1,0 +1,257 @@
+#=================================================
+# https://github.com/P3TERX/Actions-OpenWrt
+# Description: Build OpenWrt using GitHub Actions
+# Lisence: MIT
+# Author: P3TERX
+# Blog: https://p3terx.com
+#=================================================
+
+name: R2S-R3S-DHDAXCW-super-home
+
+on: 
+  repository_dispatch:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 5 1 * *' # 1st every month
+
+env:
+  REPO_URL: https://github.com/DHDAXCW/lede-rockchip
+  REPO_BRANCH: stable
+  DIY_SH: scripts/DHDAXCW-super-2024.sh
+  KMODS_IN_FIRMWARE: true
+  UPLOAD_RELEASE: true
+  TZ: Asia/Shanghai
+
+jobs:
+  Prepare:
+    runs-on: ubuntu-22.04
+    if: github.repository == 'super27036/NanoPi-R2S-SUPER27034'
+    steps:
+    - name: Free Disk Space (Ubuntu)
+      uses: gruve-p/free-disk-space@main
+      with:
+        tool-cache: true
+        codeql-images: true
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: false
+        docker-images: true
+        swap-storage: true
+        
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex g++-multilib gawk gcc-multilib gettext git gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs unzip upx-ucl vim vpnc wget xmlto xxd zlib1g-dev
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+        export PATH="/usr/lib/ccache:$PATH"
+        export CCACHE_DIR="$HOME/.ccache"
+
+    - name: Clone Source Code
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        cd openwrt
+        
+    - name: Update Feeds
+      run: |
+        cd openwrt
+        echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
+        mkdir customfeeds
+        git clone --depth=1 https://github.com/DHDAXCW/packages customfeeds/packages
+        git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
+        chmod +x ../scripts/*.sh
+        ../scripts/hook-feeds.sh
+
+    - name: Install Feeds
+      run: |
+        cd $OPENWRTROOT
+        ./scripts/feeds install -a
+
+    - name: Copy FILES
+      run: |
+        cd $OPENWRTROOT
+        cp -rf ../PATCH/super-home-files/files ./files
+
+    - name: Cache Downloads
+      uses: actions/cache@v3
+      with:
+        path: openwrt/dl
+        key: ${{ runner.os }}-downloads-${{ hashFiles('openwrt/feeds.conf.default') }}
+        restore-keys: |
+          ${{ runner.os }}-downloads-
+
+    - name: Cache ccache
+      uses: actions/cache@v3
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-ccache-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-
+
+    - name: Download Package
+      run: |
+        cd $OPENWRTROOT
+        make download -j8
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+
+    - name: Compile Tools and Toolchain
+      run: |
+        cd $OPENWRTROOT
+        make tools/compile -j$(nproc) || make tools/compile -j1 V=s
+        make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
+
+    - name: Upload Source
+      uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-source
+        path: |
+          openwrt/
+          ~/.ccache/
+
+  Build:
+    needs: Prepare
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        device: [r2s, r3s]
+      fail-fast: false
+    steps:
+    - name: Download Source
+      uses: actions/download-artifact@v4
+      with:
+        name: openwrt-source
+        path: .
+
+    - name: Setup Environment
+      run: |
+        chmod -R u+w openwrt
+        cd openwrt
+        echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
+        export PATH="/usr/lib/ccache:$PATH"
+        export CCACHE_DIR="$HOME/.ccache"
+
+    - name: Load Custom Configuration
+      run: |
+        CONFIG_FILE=configs/lean/DHDAXCW-super-2024-${{ matrix.device }}.config
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config || echo "Error: Config file for ${{ matrix.device }} not found!"
+        chmod +x scripts/*.sh
+        cd $OPENWRTROOT
+        ../$DIY_SH
+        ../scripts/modify-default.sh
+        ../scripts/preset-clash-core.sh arm64
+        ../scripts/preset-terminal-tools.sh
+        make defconfig
+        cat $OPENWRTROOT/.config
+
+    - name: Change Default Settings and Verify
+      run: |
+        echo "YES shell to zsh"
+        grep '/usr/bin/zsh' $OPENWRTROOT/package/base-files/files/etc/passwd || echo "Replacement failed!"
+        echo "Yes IP"
+        grep '192.168.5.1' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
+        echo "YES SUPERouter"
+        grep 'SUPERouter' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
+        echo "YES password"
+        grep '$1$S2TRFyMU$E8fE0RRKR0jNadn3YLrSQ0' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Replacement failed!"
+        echo "NO IPv6"
+        grep 'def_bool n' $OPENWRTROOT/config/Config-build.in || echo "Replacement failed!"
+        echo "YES 'SUPER-DHDAXCW'"
+        grep 'SUPER-DHDAXCW' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Verification failed: 'SUPER-DHDAXCW' not found!"
+
+    - name: Compile Firmware
+      run: |
+        cd $OPENWRTROOT
+        echo "Building firmware for ${{ matrix.device }}"
+        make target/compile -j$(nproc) || make target/compile -j1 V=s IGNORE_ERRORS=1
+        make diffconfig
+        make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
+        make package/index
+        make package/install -j$(nproc) || make package/install -j1 V=s
+        make target/install -j$(nproc) || make target/install -j1 V=s
+        echo "Generated files for ${{ matrix.device }}:"
+        ls -lh $OPENWRTROOT/bin/targets/rockchip/armv8/
+        cd $OPENWRTROOT/bin/targets/rockchip/armv8
+        rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}.manifest
+        rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-rootfs.tar.gz
+        rm -rf config.buildinfo
+        rm -rf packages-server.zip
+        if [ -f openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-ext4-sysupgrade.img.gz ]; then
+          mv openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-ext4-sysupgrade.img.gz DHDAXCW-super-home-${{ matrix.device }}-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
+          mv openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-squashfs-sysupgrade.img.gz DHDAXCW-super-home-${{ matrix.device }}-squashfs-$(date +"%Y%m%d").img.gz
+        else
+          echo "Error: Firmware files for ${{ matrix.device }} not found!"
+          ls -lh
+          exit 1
+        fi
+        make checksum
+        mv sha256sums DHDAXCW-super-home-${{ matrix.device }}-sha256sums
+
+    - name: Upload Firmware
+      uses: actions/upload-artifact@v4
+      with:
+        name: firmware-${{ matrix.device }}
+        path: |
+          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-ext4-sysupgrade-*.img.gz
+          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-squashfs-*.img.gz
+          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-sha256sums
+
+  Release:
+    needs: Build
+    runs-on: ubuntu-22.04
+    if: ${{ env.UPLOAD_RELEASE == 'true' && !cancelled() }}
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Generate Release Tag
+      id: tag
+      run: |
+        echo "RELEASE_TAG=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
+        echo "RELEASE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
+        touch release.txt
+        echo "此固件为自己私用，请勿下载使用
+              lede = 使用coolsnowwolf的lede仓库
+              DHDAXCW = 使用DHDAXCW的修改后仓库
+              slim = 精简版
+              stable = 稳定版" >> release.txt
+        echo "status=success" >> $GITHUB_OUTPUT
+
+    - name: Upload Firmware to Release
+      uses: softprops/action-gh-release@v2
+      if: ${{ steps.tag.outputs.status == 'success' && !cancelled() }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        name: ${{ steps.tag.outputs.RELEASE_DATE }} NanoPi-R2S-R3S-linux.5.4_固件下载
+        tag_name: ${{ steps.tag.outputs.RELEASE_TAG }}
+        body_path: release.txt
+        files: |
+          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-ext4-sysupgrade-*.img.gz
+          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-squashfs-*.img.gz
+          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-sha256sums
+          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-ext4-sysupgrade-*.img.gz
+          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-squashfs-*.img.gz
+          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-sha256sums
+
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.2.1
+      if: ${{ env.UPLOAD_RELEASE == 'true' && !cancelled() }}
+      with:
+        keep_latest: 20
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
