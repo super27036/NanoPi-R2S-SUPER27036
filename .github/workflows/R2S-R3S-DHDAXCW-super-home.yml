@@ -62,11 +62,11 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
+        echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
         
     - name: Update Feeds
       run: |
-        cd openwrt
-        echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
+        cd $OPENWRTROOT
         mkdir customfeeds
         git clone --depth=1 https://github.com/DHDAXCW/packages customfeeds/packages
         git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
@@ -83,11 +83,22 @@ jobs:
         cd $OPENWRTROOT
         cp -rf ../PATCH/super-home-files/files ./files
 
+    - name: Load Base Configuration
+      run: |
+        cd $OPENWRTROOT
+        chmod +x ../scripts/*.sh
+        ../$DIY_SH
+        ../scripts/modify-default.sh
+        ../scripts/preset-clash-core.sh arm64
+        ../scripts/preset-terminal-tools.sh
+        make defconfig
+        cat $OPENWRTROOT/.config
+
     - name: Cache Downloads
       uses: actions/cache@v3
       with:
-        path: openwrt/dl
-        key: ${{ runner.os }}-downloads-${{ hashFiles('openwrt/feeds.conf.default') }}
+        path: $OPENWRTROOT/dl
+        key: ${{ runner.os }}-downloads-${{ hashFiles('$OPENWRTROOT/feeds.conf.default') }}
         restore-keys: |
           ${{ runner.os }}-downloads-
 
@@ -117,7 +128,7 @@ jobs:
       with:
         name: openwrt-source
         path: |
-          openwrt/
+          $OPENWRTROOT/
           ~/.ccache/
 
   Build:
@@ -142,16 +153,11 @@ jobs:
         export PATH="/usr/lib/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
 
-    - name: Load Custom Configuration
+    - name: Load Device Configuration
       run: |
         CONFIG_FILE=configs/lean/DHDAXCW-super-2024-${{ matrix.device }}.config
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config || { echo "Error: Config file for ${{ matrix.device }} not found!"; exit 1; }
-        chmod +x scripts/*.sh
         cd $OPENWRTROOT
-        ../$DIY_SH
-        ../scripts/modify-default.sh
-        ../scripts/preset-clash-core.sh arm64
-        ../scripts/preset-terminal-tools.sh
         make defconfig
         cat $OPENWRTROOT/.config
 
@@ -202,61 +208,3 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: firmware-${{ matrix.device }}
-        path: |
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-ext4-sysupgrade-*.img.gz
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-squashfs-*.img.gz
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-sha256sums
-
-  Release:
-    needs: Build
-    runs-on: ubuntu-22.04
-    steps:
-    - name: Download Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: artifacts
-
-    - name: Generate Release Tag
-      id: tag
-      run: |
-        echo "RELEASE_TAG=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
-        echo "RELEASE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
-        touch release.txt
-        echo "此固件为自己私用，请勿下载使用
-              lede = 使用coolsnowwolf的lede仓库
-              DHDAXCW = 使用DHDAXCW的修改后仓库
-              slim = 精简版
-              stable = 稳定版" >> release.txt
-        echo "status=success" >> $GITHUB_OUTPUT
-
-    - name: Upload Firmware to Release
-      if: steps.tag.outputs.status == 'success' && !cancelled()
-      run: |
-        if [ "$UPLOAD_RELEASE" != "true" ]; then
-          echo "Skipping release upload as UPLOAD_RELEASE is not true"
-          exit 0
-        fi
-        echo "Uploading firmware to release"
-        gh release create "${{ steps.tag.outputs.RELEASE_TAG }}" \
-          --title "${{ steps.tag.outputs.RELEASE_DATE }} NanoPi-R2S-R3S-linux.5.4_固件下载" \
-          --notes-file release.txt \
-          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-ext4-sysupgrade-*.img.gz \
-          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-squashfs-*.img.gz \
-          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-sha256sums \
-          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-ext4-sysupgrade-*.img.gz \
-          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-squashfs-*.img.gz \
-          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-sha256sums
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Remove old Releases
-      if: ${{ !cancelled() }}
-      run: |
-        if [ "$UPLOAD_RELEASE" != "true" ]; then
-          echo "Skipping removal of old releases as UPLOAD_RELEASE is not true"
-          exit 0
-        fi
-        echo "Removing old releases, keeping latest 20"
-        gh release list --limit 100 | tail -n +21 | awk '{print $1}' | xargs -I {} gh release delete {}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
