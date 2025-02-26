@@ -147,8 +147,19 @@ jobs:
 
     - name: Setup Environment
       run: |
-        chmod -R u+w openwrt
-        cd openwrt
+        echo "Listing downloaded files:"
+        ls -lh
+        if [ -d "openwrt" ]; then
+          chmod -R u+w openwrt
+          cd openwrt
+        elif [ -d "openwrt-source/openwrt" ]; then
+          chmod -R u+w openwrt-source/openwrt
+          cd openwrt-source/openwrt
+        else
+          echo "Error: openwrt directory not found in downloaded artifact!"
+          ls -lhR
+          exit 1
+        fi
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
         export PATH="/usr/lib/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
