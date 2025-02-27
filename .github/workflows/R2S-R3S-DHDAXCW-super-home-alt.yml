@@ -130,6 +130,13 @@ jobs:
         make tools/compile -j$(nproc) || make tools/compile -j1 V=s
         make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
 
+    - name: Debug Upload Source
+      run: |
+        echo "Listing files to be uploaded from ${{ env.OPENWRTROOT }}:"
+        ls -lhR ${{ env.OPENWRTROOT }}/
+        echo "Listing ccache directory:"
+        ls -lhR ~/.ccache/
+
     - name: Upload Source
       uses: actions/upload-artifact@v4
       with:
@@ -137,10 +144,6 @@ jobs:
         path: |
           ${{ env.OPENWRTROOT }}/
           ~/.ccache/
-      run: |
-        echo "Listing files to be uploaded:"
-        ls -lhR ${{ env.OPENWRTROOT }}/
-        ls -lhR ~/.ccache/
 
   Build:
     needs: Prepare
@@ -192,102 +195,4 @@ jobs:
         grep '/usr/bin/zsh' $OPENWRTROOT/package/base-files/files/etc/passwd || echo "Replacement failed!"
         echo "Yes IP"
         grep '192.168.5.1' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
-        echo "YES SUPERouter"
-        grep 'SUPERouter' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
-        echo "YES password"
-        grep '$1$S2TRFyMU$E8fE0RRKR0jNadn3YLrSQ0' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Replacement failed!"
-        echo "NO IPv6"
-        grep 'def_bool n' $OPENWRTROOT/config/Config-build.in || echo "Replacement failed!"
-        echo "YES 'SUPER-DHDAXCW'"
-        grep 'SUPER-DHDAXCW' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Verification failed: 'SUPER-DHDAXCW' not found!"
-
-    - name: Compile Firmware
-      run: |
-        cd $OPENWRTROOT
-        echo "Building firmware for ${{ matrix.device }}"
-        make target/compile -j$(nproc) || make target/compile -j1 V=s IGNORE_ERRORS=1
-        make diffconfig
-        make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
-        make package/index
-        make package/install -j$(nproc) || make package/install -j1 V=s
-        make target/install -j$(nproc) || make target/install -j1 V=s
-        echo "Generated files for ${{ matrix.device }}:"
-        ls -lh $OPENWRTROOT/bin/targets/rockchip/armv8/
-        cd $OPENWRTROOT/bin/targets/rockchip/armv8
-        rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}.manifest
-        rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-rootfs.tar.gz
-        rm -rf config.buildinfo
-        rm -rf packages-server.zip
-        if [ -f openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-ext4-sysupgrade.img.gz ]; then
-          mv openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-ext4-sysupgrade.img.gz DHDAXCW-super-home-alt-${{ matrix.device }}-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
-          mv openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-squashfs-sysupgrade.img.gz DHDAXCW-super-home-alt-${{ matrix.device }}-squashfs-$(date +"%Y%m%d").img.gz
-        else
-          echo "Error: Firmware files for ${{ matrix.device }} not found!"
-          ls -lh
-          exit 1
-        fi
-        make checksum
-        mv sha256sums DHDAXCW-super-home-alt-${{ matrix.device }}-sha256sums
-
-    - name: Upload Firmware
-      uses: actions/upload-artifact@v4
-      with:
-        name: firmware-${{ matrix.device }}
-        path: |
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-alt-${{ matrix.device }}-ext4-sysupgrade-*.img.gz
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-alt-${{ matrix.device }}-squashfs-*.img.gz
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-alt-${{ matrix.device }}-sha256sums
-
-  Release:
-    needs: Build
-    runs-on: ubuntu-22.04
-    steps:
-    - name: Download Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: artifacts
-
-    - name: Generate Release Tag
-      id: tag
-      run: |
-        echo "RELEASE_TAG=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
-        echo "RELEASE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
-        touch release.txt
-        echo "此固件为自己私用，请勿下载使用
-              lede = 使用coolsnowwolf的lede仓库
-              DHDAXCW = 使用DHDAXCW的修改后仓库
-              slim = 精简版
-              stable = 稳定版" >> release.txt
-        echo "status=success" >> $GITHUB_OUTPUT
-
-    - name: Upload Firmware to Release
-      if: steps.tag.outputs.status == 'success' && !cancelled()
-      run: |
-        if [ "$UPLOAD_RELEASE" != "true" ]; then
-          echo "Skipping release upload as UPLOAD_RELEASE is not true"
-          exit 0
-        fi
-        echo "Uploading firmware to release"
-        gh release create "${{ steps.tag.outputs.RELEASE_TAG }}" \
-          --title "${{ steps.tag.outputs.RELEASE_DATE }} NanoPi-R2S-R3S-linux.5.4_固件下载" \
-          --notes-file release.txt \
-          artifacts/firmware-r2s/DHDAXCW-super-home-alt-r2s-ext4-sysupgrade-*.img.gz \
-          artifacts/firmware-r2s/DHDAXCW-super-home-alt-r2s-squashfs-*.img.gz \
-          artifacts/firmware-r2s/DHDAXCW-super-home-alt-r2s-sha256sums \
-          artifacts/firmware-r3s/DHDAXCW-super-home-alt-r3s-ext4-sysupgrade-*.img.gz \
-          artifacts/firmware-r3s/DHDAXCW-super-home-alt-r3s-squashfs-*.img.gz \
-          artifacts/firmware-r3s/DHDAXCW-super-home-alt-r3s-sha256sums
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Remove old Releases
-      if: ${{ !cancelled() }}
-      run: |
-        if [ "$UPLOAD_RELEASE" != "true" ]; then
-          echo "Skipping removal of old releases as UPLOAD_RELEASE is not true"
-          exit 0
-        fi
-        echo "Removing old releases, keeping latest 20"
-        gh release list --limit 100 | tail -n +21 | awk '{print $1}' | xargs -I {} gh release delete {}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        echo "YES
