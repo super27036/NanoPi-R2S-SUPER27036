@@ -74,6 +74,7 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
+  
     - name: Clone Source Code
       run: |
         df -hT $PWD
@@ -91,10 +92,12 @@ jobs:
         git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
         chmod +x ../scripts/*.sh
         ../scripts/hook-feeds.sh
+ 
     - name: Install Feeds
       run: |
         cd $OPENWRTROOT
         ./scripts/feeds install -a
+
     - name: Copy FILES
       run: |
         cd $OPENWRTROOT
@@ -111,23 +114,29 @@ jobs:
         ../scripts/preset-clash-core.sh arm64
         ../scripts/preset-terminal-tools.sh
         make defconfig
+  
     - name: Change Default Settings and Verify
       run: |
         # Change default shell to zsh
         echo "YES shell to zsh"
         grep '/usr/bin/zsh' $OPENWRTROOT/package/base-files/files/etc/passwd || echo "Replacement failed!"
+        
         # Modify default IP
         echo "Yes IP"
         grep '192.168.5.1' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
+        
         # Modify default hostname
         echo "YES SUPERouter"
         grep 'SUPERouter' $OPENWRTROOT/package/base-files/files/bin/config_generate || echo "Replacement failed!"
+        
         # Password change
         echo "YES password"
         grep '$1$S2TRFyMU$E8fE0RRKR0jNadn3YLrSQ0' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Replacement failed!"
+        
         # Disable IPv6
         echo "NO IPv6"
         grep 'def_bool n' $OPENWRTROOT/config/Config-build.in || echo "Replacement failed!"
+        
         # Verify SUPER-DHDAXCW in zzz-default-settings
         echo "YES 'SUPER-DHDAXCW'"
         grep 'SUPER-DHDAXCW' $OPENWRTROOT/package/lean/default-settings/files/zzz-default-settings || echo "Verification failed: 'SUPER-DHDAXCW' not found!"
@@ -167,6 +176,7 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "FIRMWARE=$PWD" >> $GITHUB_OUTPUT
         echo "COMPILE_STATUS=success" >> $GITHUB_OUTPUT
+ 
     - name: Generate Firmware
       if: steps.compile.outputs.COMPILE_STATUS == 'success'
       id: generate
@@ -206,6 +216,7 @@ jobs:
         make checksum
         mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DHDAXCW-super-home-sha256sums
         echo "GENERATE_STATUS=success" >> $GITHUB_OUTPUT
+ 
     - name: Generate release tag
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
