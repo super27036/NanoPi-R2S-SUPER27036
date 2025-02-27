@@ -85,6 +85,11 @@ jobs:
         cp -r private-files/PATCH/super-home-files/files ./files
         rm -rf private-files
 
+    - name: Copy FILES
+      run: |
+        cd $OPENWRTROOT
+        cp -rf ../PATCH/super-home-files/files ./files
+
     - name: Load Base Configuration
       run: |
         cd $OPENWRTROOT
@@ -132,6 +137,10 @@ jobs:
         path: |
           ${{ env.OPENWRTROOT }}/
           ~/.ccache/
+      run: |
+        echo "Listing files to be uploaded:"
+        ls -lhR ${{ env.OPENWRTROOT }}/
+        ls -lhR ~/.ccache/
 
   Build:
     needs: Prepare
@@ -145,20 +154,21 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: openwrt-source
-        path: openwrt-source
+        path: .
 
     - name: Setup Environment
       run: |
         echo "Listing downloaded files in current directory:"
         ls -lh
-        echo "Listing contents of openwrt-source directory:"
-        ls -lh openwrt-source/
-        if [ -d "openwrt-source/openwrt" ]; then
-          chmod -R u+w openwrt-source/openwrt
-          cd openwrt-source/openwrt
+        # Find the openwrt directory dynamically
+        OPENWRT_DIR=$(find . -maxdepth 2 -type d -name "openwrt" | head -n 1)
+        if [ -n "$OPENWRT_DIR" ] && [ -d "$OPENWRT_DIR" ]; then
+          echo "Found openwrt directory at: $OPENWRT_DIR"
+          chmod -R u+w "$OPENWRT_DIR"
+          cd "$OPENWRT_DIR"
         else
           echo "Error: openwrt directory not found in downloaded artifact!"
-          ls -lhR openwrt-source/
+          ls -lhR .
           exit 1
         fi
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
@@ -209,24 +219,24 @@ jobs:
         rm -rf config.buildinfo
         rm -rf packages-server.zip
         if [ -f openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-ext4-sysupgrade.img.gz ]; then
-          mv openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-ext4-sysupgrade.img.gz DHDAXCW-super-home-${{ matrix.device }}-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
-          mv openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-squashfs-sysupgrade.img.gz DHDAXCW-super-home-${{ matrix.device }}-squashfs-$(date +"%Y%m%d").img.gz
+          mv openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-ext4-sysupgrade.img.gz DHDAXCW-super-home-alt-${{ matrix.device }}-ext4-sysupgrade-$(date +"%Y%m%d").img.gz
+          mv openwrt-rockchip-armv8-friendlyarm_nanopi-${{ matrix.device }}-squashfs-sysupgrade.img.gz DHDAXCW-super-home-alt-${{ matrix.device }}-squashfs-$(date +"%Y%m%d").img.gz
         else
           echo "Error: Firmware files for ${{ matrix.device }} not found!"
           ls -lh
           exit 1
         fi
         make checksum
-        mv sha256sums DHDAXCW-super-home-${{ matrix.device }}-sha256sums
+        mv sha256sums DHDAXCW-super-home-alt-${{ matrix.device }}-sha256sums
 
     - name: Upload Firmware
       uses: actions/upload-artifact@v4
       with:
         name: firmware-${{ matrix.device }}
         path: |
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-ext4-sysupgrade-*.img.gz
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-squashfs-*.img.gz
-          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-${{ matrix.device }}-sha256sums
+          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-alt-${{ matrix.device }}-ext4-sysupgrade-*.img.gz
+          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-alt-${{ matrix.device }}-squashfs-*.img.gz
+          ${{ env.OPENWRTROOT }}/bin/targets/rockchip/armv8/DHDAXCW-super-home-alt-${{ matrix.device }}-sha256sums
 
   Release:
     needs: Build
@@ -261,12 +271,12 @@ jobs:
         gh release create "${{ steps.tag.outputs.RELEASE_TAG }}" \
           --title "${{ steps.tag.outputs.RELEASE_DATE }} NanoPi-R2S-R3S-linux.5.4_固件下载" \
           --notes-file release.txt \
-          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-ext4-sysupgrade-*.img.gz \
-          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-squashfs-*.img.gz \
-          artifacts/firmware-r2s/DHDAXCW-super-home-r2s-sha256sums \
-          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-ext4-sysupgrade-*.img.gz \
-          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-squashfs-*.img.gz \
-          artifacts/firmware-r3s/DHDAXCW-super-home-r3s-sha256sums
+          artifacts/firmware-r2s/DHDAXCW-super-home-alt-r2s-ext4-sysupgrade-*.img.gz \
+          artifacts/firmware-r2s/DHDAXCW-super-home-alt-r2s-squashfs-*.img.gz \
+          artifacts/firmware-r2s/DHDAXCW-super-home-alt-r2s-sha256sums \
+          artifacts/firmware-r3s/DHDAXCW-super-home-alt-r3s-ext4-sysupgrade-*.img.gz \
+          artifacts/firmware-r3s/DHDAXCW-super-home-alt-r3s-squashfs-*.img.gz \
+          artifacts/firmware-r3s/DHDAXCW-super-home-alt-r3s-sha256sums
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
