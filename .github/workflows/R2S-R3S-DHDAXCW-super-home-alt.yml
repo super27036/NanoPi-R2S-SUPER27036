@@ -78,10 +78,12 @@ jobs:
         cd $OPENWRTROOT
         ./scripts/feeds install -a
 
-    - name: Copy FILES
+    - name: Clone Private Files Repository
       run: |
         cd $OPENWRTROOT
-        cp -rf ../PATCH/super-home-files/files ./files
+        git clone https://${{ secrets.FILES_TOKEN }}@github.com/super27034/Private-FILES.git private-files
+        cp -r private-files/PATCH/super-home-files/files ./files
+        rm -rf private-files
 
     - name: Load Base Configuration
       run: |
@@ -143,26 +145,28 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: openwrt-source
-        path: .
+        path: openwrt-source
 
     - name: Setup Environment
       run: |
-        echo "Listing downloaded files:"
+        echo "Listing downloaded files in current directory:"
         ls -lh
-        if [ -d "openwrt" ]; then
-          chmod -R u+w openwrt
-          cd openwrt
-        elif [ -d "openwrt-source/openwrt" ]; then
+        echo "Listing contents of openwrt-source directory:"
+        ls -lh openwrt-source/
+        if [ -d "openwrt-source/openwrt" ]; then
           chmod -R u+w openwrt-source/openwrt
           cd openwrt-source/openwrt
         else
           echo "Error: openwrt directory not found in downloaded artifact!"
-          ls -lhR
+          ls -lhR openwrt-source/
           exit 1
         fi
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
         export PATH="/usr/lib/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
+        echo "Current directory after cd:"
+        pwd
+        ls -lh
 
     - name: Load Device Configuration
       run: |
