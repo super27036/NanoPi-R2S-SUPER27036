@@ -91,10 +91,12 @@ jobs:
         cd $OPENWRTROOT
         ./scripts/feeds install -a
 
-    - name: Copy FILES
+    - name: Clone Private Files Repository
       run: |
         cd $OPENWRTROOT
-        cp -rf ../PATCH/super-home-files/files ./files
+        git clone https://${{ secrets.FILES_TOKEN }}@github.com/super27034/Private-FILES.git private-files
+        cp -r private-files/PATCH/super-home-files/files ./files
+        rm -rf private-files
         
     - name: Load Custom Configuration
       run: |
