@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: R2S-DH-work-2025
+name: R2S-DH-home-2025
 
 on: 
   repository_dispatch:
@@ -84,17 +84,18 @@ jobs:
         git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
         chmod +x ../scripts/*.sh
         ../scripts/hook-feeds.sh
+        ./scripts/feeds update -a  # 确保更新所有 feed，包括 community
  
     - name: Install Feeds (安装 Feeds)
       run: |
         cd $OPENWRTROOT
-        ./scripts/feeds install -a
+        ./scripts/feeds install -a  # 安装所有 feed 中的包，包括 community
 
     - name: Clone Private Files Repository (克隆私有文件仓库)
       run: |
         cd $OPENWRTROOT
         git clone https://${{ secrets.FILES_TOKEN }}@github.com/super27034/Private-FILES.git private-files
-        cp -r private-files/PATCH/super-work-files/files ./files
+        cp -r private-files/PATCH/super-home-files/files ./files
         rm -rf private-files
         
     - name: Load Custom Configuration (加载自定义配置)
@@ -107,7 +108,17 @@ jobs:
         ../scripts/modify-default.sh
         ../scripts/preset-clash-core.sh arm64
         ../scripts/preset-terminal-tools.sh
+        # 强制确保 luci-app-aliddns 被启用
+        echo "CONFIG_PACKAGE_luci-app-aliddns=y" >> .config
         make defconfig
+        # 输出最终配置以便验证
+        cat .config > config_after_defconfig.txt
+  
+    - name: Upload Config for Verification (上传配置以验证)
+      uses: actions/upload-artifact@v4  # 更新为 v4
+      with:
+        name: config-after-defconfig
+        path: $OPENWRTROOT/config_after_defconfig.txt
   
     - name: Change Default Settings and Verify (更改默认设置并验证)
       run: |
@@ -205,18 +216,18 @@ jobs:
         rm -rf config.buildinfo
         rm -rf packages-server.zip
         # Only process SquashFS firmware (仅处理 SquashFS 固件)
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DH-work-2025-r2s-squashfs-$(date +"%Y%m%d").img.gz
+        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz DH-home-2025-r2s-squashfs-$(date +"%Y%m%d").img.gz
         popd
         make checksum
-        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DH-work-2025-sha256sums
+        mv bin/targets/rockchip/armv8/sha256sums bin/targets/rockchip/armv8/DH-home-2025-sha256sums
         echo "GENERATE_STATUS=success" >> $GITHUB_OUTPUT
  
     - name: Generate release tag (生成发布标签)
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-          echo "release_tag=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
-          echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
+          echo "RELEASE_TAG=$(date +"%Y.%m.%d")-Lean1" >> $GITHUB_OUTPUT
+          echo "RELEASE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
           touch release.txt
           echo "此固件为自己私用，请勿下载使用
                 lede = 使用coolsnowwolf的lede仓库
@@ -231,8 +242,8 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          name: ${{ steps.tag.outputs.release_date }} NanoPi-R2S-linux.5.4_固件下载
-          tag_name: ${{ steps.tag.outputs.release_tag }}
+          name: ${{ steps.tag.outputs.RELEASE_DATE }} NanoPi-R2S-linux.5.4_固件下载
+          tag_name: ${{ steps.tag.outputs.RELEASE_TAG }}
           body_path: release.txt
           files: ${{ env.FIRMWARE }}/*
 
