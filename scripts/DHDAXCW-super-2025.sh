@@ -27,6 +27,9 @@ git clone --depth=1 https://github.com/super27035/luci-app-vssr
 # Add OpenClash (添加 OpenClash)
 git clone --depth=1 https://github.com/super27034/OpenClash.git
 
+# Add aliddns (添加 aliddns)
+git clone --depth=1 https://github.com/super27034/luci-app-aliddns.git
+
 # Add luci-app-poweroff (添加 luci-app-poweroff)
 git clone --depth=1 https://github.com/esirplayground/luci-app-poweroff
 
