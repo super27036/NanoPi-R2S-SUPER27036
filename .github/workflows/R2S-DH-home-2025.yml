@@ -84,6 +84,7 @@ jobs:
         git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
         chmod +x ../scripts/*.sh
         ../scripts/hook-feeds.sh
+        ./scripts/feeds update -a  # 确保更新所有 feed，包括 community
  
     - name: Install Feeds (安装 Feeds)
       run: |
