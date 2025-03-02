@@ -41,6 +41,9 @@ popd  # 第一个 popd：从 OpenWrt-Add 返回到 package/community
 
 popd  # 第二个 popd：从 package/community 返回到 OpenWrt 根目录
 
+# Register package/community as a feed (注册 package/community 为 feed)
+echo "src-link community $PWD/package/community" >> feeds.conf.default
+
 # Change default shell to zsh (更改默认 shell 为 zsh)
 sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 
