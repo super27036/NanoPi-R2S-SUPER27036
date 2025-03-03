@@ -31,7 +31,7 @@ git clone --depth=1 https://github.com/super27034/OpenClash.git
 git clone --depth=1 https://github.com/super27034/luci-app-aliddns.git
 
 # Add neteasemusic (网易音乐)
-# git clone --depth=1 https://github.com/super27034/luci-app-unblockneteasemusic.git
+git clone --depth=1 https://github.com/super27034/luci-app-unblockneteasemusic.git
 
 # Add luci-app-poweroff (添加 luci-app-poweroff)
 git clone --depth=1 https://github.com/esirplayground/luci-app-poweroff
